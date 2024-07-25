@@ -1,6 +1,25 @@
-use std::io::Read;
-use std::net::{TcpListener, TcpStream};
-use std::thread;
+use std::{
+    thread,
+    net::{
+        TcpListener,
+        TcpStream
+    },
+    io::Read
+};
+use rusqlite::{
+    Connection,
+    params
+};
+
+fn insert_temp_data(conn: &Connection, temp: f64, humidity: f64, co2: f64) {
+    let query = "
+        INSERT INTO tempData (temperature, humidity, co2)
+        VALUES (?1, ?2, ?3);
+    ";
+    
+    conn.execute(query, params![temp, humidity, co2]).unwrap();
+}
+
 
 fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
